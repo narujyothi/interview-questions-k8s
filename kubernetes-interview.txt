@@ -1,0 +1,305 @@
+1. wt is the AKS? 
+Ans: AKS (Azure Kubernetes Service) is a managed Kubernetes service by Microsoft Azure. 
+It abstracts away the complexity of setting up and maintaining a Kubernetes control plane, 
+allowing you to deploy, manage, and scale containerized applications easily.
+
+2. wt is the diff b/w selfhosted and  AKS?
+
+3. how AKS handle High availabilty?
+ans: Yes, Azure Kubernetes Service (AKS) inherently handles high availability by deploying Kubernetes clusters 
+     across multiple nodes within a Virtual Machine Scale Set, and can be further enhanced by deploying across availability zones, 
+     ensuring application resilience and minimal downtime. 
+4. what exactly side car containers in AKS?
+ans: Sidecar containers are designed to enhance or extend the functionality of the main application container 
+     by providing supporting processes, utilities, or services. 
+    Example Use Cases:
+	Logging: A sidecar container can collect and ship logs from the main application container to a central logging service. 	
+	Monitoring: A sidecar container can monitor the health and performance of the main application container and report metrics. 
+	Security: A sidecar container can handle tasks like encrypting or decrypting data, or providing access control. 
+	Data Synchronization: A sidecar container can synchronize data between the main application container and a remote source. 
+5.  difference between Network Load Balancer (NLB) and Application Load Balancer (ALB)?
+ans: NLB operates at layer 4 (transport layer), handling TCP and UDP connections, while ALB operates at layer 7 (application layer), 
+     processing HTTP/HTTPS traffic and supporting content-based routing
+
+
+terraform:
+
+1. wt is the terraform?
+   it is IaaC
+   automate infra CRUD(create, update, delete,read)/create the Infrastructure using terraform, so it reduce the manpower and time period
+2. how to recover state file when it is currepted/remove?
+
+ans: using # terraform import 
+
+3. what is null resource in terraform?
+A. null resouce will not create any resource but u define some acttions inside that it will perform or ecxute those.
+
+4. terraform taint and untaint?
+A when we terraform taint , 
+
+
+5. how to create terraform workspaces?
+A. teeraform workspace new dev
+
+neudesic interview questions:
+_________________________
+1. how to write pipeline file like have 2 stages A & B i want to use stage-A varible in Stage-B  
+Ans: stages:
+- stage: A
+  jobs:
+  - job: A1
+    steps:
+     - pwsh: Write-Host "##vso[task.setvariable variable=varFromA;isOutput=true]A"
+       name: writevar
+
+- stage: B
+  dependsOn: A
+  jobs:
+  - job: B1
+    variables: 
+      varA: $[ stageDependencies.A.A1.outputs['writevar.varFromA'] ]
+    steps:
+     - pwsh: |
+          Write-Host "##vso[task.setvariable variable=varFromB;isOutput=true]B"
+          Write-Host "accesses $(VarA) from A"
+       name: writevar
+
+- stage: C
+  dependsOn: 
+  - A
+  - B
+  jobs:
+  - job: C1
+    variables: 
+      varA: $[ stageDependencies.A.A1.outputs['writevar.varFromA'] ]
+      varB: $[ stageDependencies.B.B1.outputs['writevar.varFromB'] ]
+    steps:
+     - pwsh: |
+          Write-Host "##vso[task.setvariable variable=varFromC;isOutput=true]C"
+          Write-Host "accesses $(varB) from B"
+          Write-Host "accesses $(varA) from A"
+       name: writevar
+2. what is difference b/w functional app and logic app in azure infra?
+
+ans: Azure Function Apps are code-based, allowing developers to write and execute code (e.g., in C#, Python) in response to events. 
+Logic Apps offer a visual workflow designer, enabling users to create and automate workflows by connecting various services and systems without writing code
+3. what is the landingzone?
+ans: A landing zone is a pre-configured Azure environment that includes networking, identity, governance, security, and policies to host your applications. 
+      It's the foundation for deploying workloads in a consistent, secure, and scalable way.
+4. wt is are the deployment startegies? 
+ans: rollingupdate,canary,blue/green deployment
+
+5. wt is the difference b/w canary and blue/green deployments?
+6. where u stored sentive data in ansible, azure pipeline and jenkins tell me?
+7. how to store ur secretes in azure valut in ansible, azure & jenkins?
+ans: - debug:
+    msg: "{{ lookup('azure_keyvault_secret', 'secret-name', vault_url='https://<vault-name>.vault.azure.net/') }}"
+
+8. wt are the build/depoyment steps?
+ans: Build Phase:
+
+Code checkout (Git)
+
+Dependency install
+
+Static code analysis / Linting
+
+Unit tests
+
+Build artifact (JAR, Docker image, etc.)
+
+Push artifact to repo (Azure Artifacts, Nexus, DockerHub, etc.)
+
+Deploy Phase:
+
+Retrieve artifacts
+
+Provision infrastructure (Terraform/ARM/Bicep)
+
+Deploy app (Helm/K8s manifests, ARM templates, etc.)
+
+Post-deploy checks
+
+Notify teams (Slack, email, etc.)
+
+9. ur using kubernetes for infra or deployment?
+ans: deployment
+10. hw to get user configuration in poershell
+ans: Use the Get-MailboxUserConfiguration cmdlet.
+
+
+11. what is API and NAT, when we used?
+ans: You might use an API when you want to integrate your application with another service, 
+    for example, using a third-party payment gateway or accessing data from a different database. 
+   You might use NAT when you have a private network behind a firewall and need to connect to the internet or another network with a different IP address space. 
+12. when we use internet gateway and Nat gateway?
+ans: Internet Gateway:
+     Allows both inbound (from the internet) and outbound (to the internet) traffic for instances with public IP addresses.
+     NAT Gateway:
+     Enables outbound-only internet access for instances with private IP addresses, providing a layer of security by preventing direct internet-to-instance connections. 
+13. What is a Taint in Terraform?
+A taint forces Terraform to destroy and recreate a resource on the next apply.
+
+terraform taint <resource_type.name>
+
+14. What is a Null Resource in Terraform?
+A null_resource is used to execute arbitrary actions/scripts using provisioners (like local-exec or remote-exec) when there's no specific resource to tie them to.
+resource "null_resource" "example" {
+  provisioner "local-exec" {
+    command = "echo Hello World"
+  }
+}
+
+
+15. explain  the CI/CD pipeline implementation?
+A. we use github as a soucrce code repo and target platform is k8's
+   then we use jenkins or azure piprline  for continuous integration 
+   stages: 
+   checkout the code, build & unit testing then code ansalysis(sonarcube),image building(will create container image),image scan,image push(ECR)
+  here we used declarative pipeline
+
+
+16. diff b/w pod and container?
+17. diff b/w pod & deployment?
+
+JSW:
+
+1 what is the service principle and identity manage/manage identity
+2. when ever disaster recovery is occure how u will get the data?
+3. what is the difference b/w pod,deployment,service?
+5. when u use the secrate manager to fetch the creds, is at first and at end of the deployment?
+6.what are the chalages u faced in k8's?
+7.
+
+mind tree:
+1.how to pass dynamic paramerter in docker?
+A.  ${port}
+
+2.i have 10 file in my locall git and modified 2 file then how can commit that 2 files?
+A. using git add <name> it will add that perticuler file into stange and then commit that changes
+
+3. in jenkins what is parameterized jobs.
+A.  A build parameter allows us to pass data into our Jenkins jobs. Using build parameters, we can pass any data we want:
+    git branch name, secret credentials, hostnames and ports, and so on.
+
+4.i donn't want  to login jenkins server  and build job at 3pm ?
+A. using cron jobs we can fix the time 
+   Open your Jenkins job → click “Configure”.
+
+	Scroll to the section “Build Triggers”.
+
+	Check ✅ “Build periodically”.
+
+	In the Schedule box, enter this:
+       pipeline {
+    agent any
+
+    triggers {
+        cron('0 15 * * *')  // Runs daily at 3 PM
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                echo "Building application at 3 PM..."
+            }
+        }
+    }
+}
+
+
+5.how to automate roll-back machanisum?
+
+this is AWS ECS deployment
+aws deploy create-deployment \
+  --application-name myapp \
+  --deployment-group-name myapp-prod \
+  --s3-location bucket=mybucket,key=myapp.zip,bundleType=zip \
+  --auto-rollback-configuration enabled=true,events=DEPLOYMENT_FAILURE
+this is azuredevops
+- stage: Deploy
+  jobs:
+  - job: DeployApp
+    steps:
+    - script: |
+        az webapp deployment source config-zip \
+          --name myapp --resource-group rg --src app.zip
+      continueOnError: true
+    - script: |
+        if [ $? -ne 0 ]; then
+          echo "Deployment failed, rolling back..."
+          az webapp deployment source config-zip \
+            --name myapp --resource-group rg --src previous_app.zip
+        fi
+6.to display only folders in a current directory?
+A. ls -d */
+
+7.i have 10 managed nodes and client said i don't want run application in 7 & 8 nodes? 
+A.create groups in inventory and then run which group is we need. ansible group-name -m ping
+
+8.you build one application evrything is fine but developer said dis is wrong build that time waht u will check?
+
+9. which command we used to check linux flavor?
+A, cat /etc/os-release
+
+
+LTiMindtree::
+
+1. what is terraform explicit & implicity 
+
+2. how to create branch in git?
+git branch name
+
+
+T-Mobile:
+
+1. pipeline is running long time how to do u reduce the time without compromisng the quality?
+2. how to set alert in cloud watch?
+3. wt is the difference b/w ingress and egress in k8's?
+4. how to get secrates while performing CI/CD?
+5. how to integrate github creds into azure_pipeline?
+6. explain about k8's architecture?
+7. using terraform how to reduce manual time to provisiong the infrastructure?
+8. how to set CI/CD pipeline without asking manuall approval while running pipeline?
+
+
+what is the diff b/w normal vraibales and local varaibales in terraform?
+
+A. 1. in normal variable we can't use expression like
+   variable "az_names" {
+     default = data.aws_availabilty_zones.azs.names
+}
+  it takes only simple text/value
+
+we can pass inputs from commandprompts whereas in local variable we can't pass inputs from commandprompts
+
+Q) what is the difference b/w taint and import
+2. wt is the diff b/w count and for-each?
+3. what is the chanlenge u faced in your current project?
+4. wt is the diff b/w taint and import?
+5. diff b/w terrform configuration and  tfstate file?
+6. how to make connectivity from azure to aws?
+6. what is the terraform input variable from azuredevops pipeline
+
+
+
+==================================================================================
+
+HCL interview questions:
+
+1. how to run terraform from CI/CD pipeline
+2. what is the taint 
+3. there is 10 resources but i don't wanted to destroy all 10 i wanted to stay 1 resourece how u will do?
+4. how to run set of commands inside the ec2 server using terraform?
+5. for suppose while running the CI/CD pipeline it is taking long time to run, how u will debug that?
+6. how to pass one module ec2 info to another module resource
+7. what is the use of local variable in tf?
+8. how u will create 3 backend buckets in terraform?
+9. write code to pass the state file to s3 bucket?
+10. in ansible the playbook is taking long time how to overcome that?
+11. ealier u  created aws infra manually, now u have to automate that existing infra from tf, how u will do?(u have 100+ resources that time hw u will do)
+12. what terraform drift?
+13. do u created custom modules?
+
+
+
