@@ -167,6 +167,62 @@ JSW:
 1 what is the service principle and identity manage/manage identity
 2. when ever disaster recovery is occure how u will get the data?
 3. what is the difference b/w pod,deployment,service?
+A. Pod contains one or more containers (usually 1 container).
+   Pods are ephemeral (temporary).
+   Pod IP changes every time it restarts.
+   You never manage pods manually in a real environment.
+	ex: apiVersion: v1
+        kind: Pod
+        metadata: 
+          name: myapp
+        spec:
+          containers:
+          - name: myapp
+            image: nginx
+=====================================
+Deployment:  A Deployment manages pods.
+Ensures the desired number of pods are running.
+Provides self-healing (restarts pods if they crash).
+
+apiVersion: v1
+kind: Dployment 
+metadata:
+  name: myapp
+spec:
+  replicas: 3
+  selectors: 
+    matchLabel: 
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+    containers: 
+       name: nginx
+       image: nginx
+================================================
+Service: a service exposes pods to the internet
+Why Services are needed?
+Because pod IP changes, but service gives a stable IP + DNS name.
+Types of Services:
+
+ClusterIP → Internal access only (default)
+NodePort → Exposes app on every worker node (30000–32767)
+LoadBalancer → Creates cloud Load Balancer (AWS/Azure/GCP)
+ExternalName → Maps DNS name to external service
+ex:
+ apiVersion: v1
+ kind: service
+ metadata:
+   name: myservice
+spec:
+  selector:
+    app: web
+  ports: 
+    - port: 80
+      targetPort: 80
+  type: LoadBalancer
 5. when u use the secrate manager to fetch the creds, is at first and at end of the deployment?
 6.what are the chalages u faced in k8's?
 7.
@@ -300,6 +356,26 @@ HCL interview questions:
 11. ealier u  created aws infra manually, now u have to automate that existing infra from tf, how u will do?(u have 100+ resources that time hw u will do)
 12. what terraform drift?
 13. do u created custom modules?
+
+=====================================================
+copart company:
+1. write docker file
+2. what is the difference b/w ENTRYPOINT and CMD in docker file?
+3. write CI/CD pipeline ?
+4. what is the difference between NAT & API?
+5. how to use configMaps in kubernetes?
+6. write ansible playbook to install python package?
+7. display files which is having morethan 5mb?
+A.find . -type f -size +5M
+
+
+For more complex searches, you can use the du command to calculate disk usage and find out which files are consuming the most space. 
+LinuxConfig.org
+
+8. how to identify who rebooted servers?
+10. how to build the docker image?
+
+
 
 
 
