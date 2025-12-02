@@ -160,8 +160,33 @@ A. we use github as a soucrce code repo and target platform is k8's
 
 
 16. diff b/w pod and container?
-17. diff b/w pod & deployment?
+A. Pod:
+ A Pod can contain one or more containers.
+All containers inside a Pod:
+Share the same network namespace (same IP).
+Can communicate via localhost.
+Can share volumes/storage.
+Container: 
+Runs the software, service, or process.
+A container lives inside a Pod when running in Kubernetes.
+Cannot exist independently in Kubernetes without a Pod.
+Easy Analogy:
+| Concept        | Analogy                        |
+| -------------- | ------------------------------ |
+| **Pod**        | A house                        |
+| **Containers** | People living inside the house |
+| **Pod IP**     | House address                  |
+| **Volumes**    | Shared storeroom               |
 
+17. diff b/w pod & deployment?
+A. Pod: If a Pod dies, it does NOT automatically restart unless a controller manages it.
+   deployment: A controller that manages ReplicaSets, which manage Pods.
+     Ensures the desired number of Pods are always running.
+      Handles:
+        Auto-healing (recreates Pods)
+        Scaling (increase/decrease replicas)
+        Rolling updates
+        Rollbacks
 JSW:
 
 1 what is the service principle and identity manage/manage identity
@@ -360,20 +385,97 @@ HCL interview questions:
 =====================================================
 copart company:
 1. write docker file
+A. FROM Ubuntu:latest
+   WORKDIR /usr/app   
+   COPy . .  # copying current directory content into the container
+   ENV ENV_NAME="DEV"
+   RUN pip install krb5
+   ENTRYPOINT ["echo", "hello"]
+   EXPOSE 5001
+   CMD ["uvicorn", "src.main:app", "--port=5001", "--host=0.0.0.0","--workers=4"]
+
 2. what is the difference b/w ENTRYPOINT and CMD in docker file?
+A. ENTRYPOINT = What to run
+   CMD = How to run it (default arguments)
 3. write CI/CD pipeline ?
 4. what is the difference between NAT & API?
-5. how to use configMaps in kubernetes?
+5. how to use configMaps in kubernetes? 
+A. ConfigMap is used to store non-secret configuration data(key-value pairs,config files, envireonment settings)
+   You can use ConfigMaps in 3 ways:
+    As Environment variables
+    As Command-line arguments
+    As Mounted configuration files
+
 6. write ansible playbook to install python package?
+A: - hosts: targets
+     tasks:
+       - name: install python package on rhel
+         dnf:
+           name: python3
+           state: present
+        - name: install python package:
+          apt:
+            name: python3.10
+            state: present
+
 7. display files which is having morethan 5mb?
-A.find . -type f -size +5M
-
-
+A.find . -type f -size +5M    or find . -type f -size +5M -exec ls -lh {} \; | sort -k5 -h
 For more complex searches, you can use the du command to calculate disk usage and find out which files are consuming the most space. 
 LinuxConfig.org
 
 8. how to identify who rebooted servers?
-10. how to build the docker image?
+A. last -x |grep reboot  --> Check reboot history
+   journalctl |grep -i "reboot"
+9. how to build the docker image?
+A. docker build -t imagename  or docker build -t  imagename -f path/to/Dockerfile .
+10. how to dispaly .zip file in the directory
+A. ls *.zip
+   Using find (current directory only, not recursive)
+   $ find . -maxdepth 1 -type f -name "*.zip"
+   Using find recursively (all subdirectories)
+   $ find . -type f -name "*.zip"
+
+11. how to check the live logs in linux server?
+A. tail -f /var/logs/logmassage.txt  or tail -n 50 -f /var/log/logmessage.log
+
+HSBC:
+1. how to create 10 instances with specific names using TF?
+A.  variable "instance_names" {
+  default = [
+    "app-server-1",
+    -------etc.
+    "app-server-10"
+  ]
+}
+ 
+ resourec "aws_instance" "example" {
+    for_each = var.instance_names
+    ami = "ammi-688298"
+    instance_type = "t2.micro"
+      tags = {
+    Name = each.key
+  }
+}
+
+2. how to display out of 10 server 3rd server id using terraform?
+A. output "third_instance_id" {
+  value = aws_instance.example[2].id
+}
+
+3. let say currently deployment is pointing to the blue ec2 server nt then how u pointing to that into green ec2-server using pipelines?
+4. how to create autoscalling for the ec2-instance using terraform?
+5. how to start the pod ?
+6. container is getting crashloopbackup while running time, how do u check whay it is getting that error?
+7. how to create pipeline for terraform code?
+8. how to provide read access of the s3 bucket for the particular container?
+
+
+
+
+
+
+
+
 
 
 
