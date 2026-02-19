@@ -472,6 +472,17 @@ A. output "third_instance_id" {
 
 
 
+===================================================================
+capgemini:
+1.in terraform how to use one module resource into another module?
+2.what does terraform format command will do?
+3.how to wrote deployment.yml manifest file in K8's?
+4. have u modified terraform state file?
+5. what CI/CD pipeline will do?
+6. in kuberneteas what work u will do?
+7. explain me your current project?
+
+
 
 
 
